@@ -47,3 +47,10 @@
 .admin-form .field{display:grid;gap:8px}
 .admin-controls label input[type=checkbox]{min-width:unset;width:16px;height:16px}
 .text-truncated{display:inline-block;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Public demo: prominent disclosure, responsive and read-only. */
+.demo-notice{display:flex;align-items:center;gap:13px;padding:14px 18px;margin-bottom:24px;border-radius:14px;border:1px solid #d9e4ff;background:#edf3ff;color:#30539a}
+.demo-notice-dot{width:10px;height:10px;min-width:10px;border-radius:50%;background:#3e6ae0;box-shadow:0 0 0 4px #dbe6ff}
+.demo-notice>div{flex:1;display:grid;gap:3px}.demo-notice strong{font-size:12px}.demo-notice>div span{font-size:11px;color:#6b7fa9}
+.demo-notice-pill{border-radius:20px;background:#dce7ff;padding:6px 11px;font-size:10px;font-weight:800;white-space:nowrap}.demo-user{cursor:default}.demo-user:hover{background:transparent}
+@media(max-width:560px){.demo-notice{padding:12px;gap:9px;align-items:flex-start}.demo-notice-pill{font-size:9px;padding:5px 8px}.demo-notice>div span{font-size:10px}}

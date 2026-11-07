@@ -8,6 +8,7 @@ const text=(value,max=240)=>String(value||'').trim().slice(0,max);
 const id=(value)=>typeof value==='string'&&/^[0-9a-f-]{36}$/i.test(value);
 export async function GET(){
  try{
+  if(process.env.PUBLIC_DEMO_ONLY==='true')return deny('Public demo only',403);
   const user=await getUser();if(!user?.is_platform_admin)return deny();
   const entries=await Promise.all([
    sql(`SELECT (SELECT count(*)::int FROM workspaces WHERE archived_at IS NULL) AS workspaces,
@@ -41,6 +42,7 @@ export async function GET(){
 }
 export async function POST(request){
  try{
+  if(process.env.PUBLIC_DEMO_ONLY==='true')return deny('Public demo only',403);
   if(!safeMutation(request))return deny('Invalid origin');
   if(!request.headers.get('content-type')?.startsWith('application/json'))return deny('JSON required',415);
   const raw=await request.text();if(raw.length>16000)return deny('Too large',413);
