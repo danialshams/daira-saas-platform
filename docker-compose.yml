@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: saas_app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: daira_saas
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U saas_app -d daira_saas"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [app_private]
+  migrate:
+    build: {context: ., target: migrator}
+    depends_on: {db: {condition: service_healthy}}
+    environment:
+      DATABASE_URL: postgresql://saas_app:${POSTGRES_PASSWORD}@db:5432/daira_saas
+    networks: [app_private]
+    restart: "no"
+  app:
+    build: {context: ., target: app}
+    restart: unless-stopped
+    ports: ["${PORT:-3000}:3000"]
+    depends_on: {migrate: {condition: service_completed_successfully}}
+    environment:
+      DATABASE_URL: postgresql://saas_app:${POSTGRES_PASSWORD}@db:5432/daira_saas
+      APP_SECRET: ${APP_SECRET:?Set APP_SECRET}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?Set NEXT_PUBLIC_APP_URL}
+      NODE_ENV: production
+    networks: [app_private]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      retries: 5
+  worker:
+    build: {context: ., target: worker}
+    restart: unless-stopped
+    depends_on: {migrate: {condition: service_completed_successfully}}
+    environment:
+      DATABASE_URL: postgresql://saas_app:${POSTGRES_PASSWORD}@db:5432/daira_saas
+      APP_SECRET: ${APP_SECRET:?Set APP_SECRET}
+    networks: [app_private]
+networks:
+  app_private: {}
+volumes:
+  pgdata: {}

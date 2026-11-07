@@ -1,0 +1,1 @@
+export default function manifest(){return {name:'دایرا کلود | زیرساخت SaaS',short_name:'دایرا کلود',description:'مدیریت فضاهای کاری و اشتراک‌های نرم‌افزاری',start_url:'/',display:'standalone',background_color:'#f6f8fc',theme_color:'#2458ee',lang:'fa',dir:'rtl',icons:[{src:'/icons/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]};}
