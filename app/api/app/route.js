@@ -37,6 +37,7 @@ async function plans() { const {rows}=await sql('SELECT * FROM plans ORDER BY pr
 
 export async function GET(request) {
  try {
+  if(process.env.PUBLIC_DEMO_ONLY==='true')return ok({authenticated:false,publicDemo:true});
   const user=await getUser();
   const planRows=await plans();
   if(!user) return ok({authenticated:false,plans:planRows,products,providers:providerStatus()});
@@ -81,6 +82,7 @@ export async function GET(request) {
 
 export async function POST(request) {
  try {
+  if(process.env.PUBLIC_DEMO_ONLY==='true')return fail('این محیط فقط برای نمایش است.',403);
   const origin=request.headers.get('origin');
   if(!safeMutation(request)) return fail('درخواست از مبدأ نامعتبر است.',403);
   if(!request.headers.get('content-type')?.startsWith('application/json')) return fail('درخواست JSON لازم است.',415);
